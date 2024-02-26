@@ -1,8 +1,9 @@
 import {useState} from "react";
+import QRCode from 'qrcode'
 
 import styled from "@emotion/styled";
 
-import {Qr} from "./Qr.tsx";
+import {Preview} from "./Preview.tsx";
 
 const Row = styled.div`
     display: flex;
@@ -25,20 +26,22 @@ export function CreateCompetitionInfo() {
   const [urlDescription, setUrlDescription] = useState<string>('');
   const [url, setUrl] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const [qrCode, setQrCode] = useState<string>('');
+  
+  const generateQR = async (text: string) => {
+    try {
+      const qrData = await QRCode.toDataURL(text)
 
-  const [isPreviewVisible, showPreview] = useState<boolean>(false);
+      setQrCode(qrData);
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
     <div>
-      <h1>CreateCompetitionInfo</h1>
+      <h1>Luo kilpailun infolappunen</h1>
 
-      <h2>Values</h2>
-
-      <p>title: {title}</p>
-      <p>date: {date}</p>
-      <p>urlDescription: {urlDescription}</p>
-      <p>url: {url}</p>
-      <p>content: {content}</p>
 
       <Div>
         <Row>
@@ -66,11 +69,11 @@ export function CreateCompetitionInfo() {
           <input id="url" name="url" value={url} onChange={(e) => setUrl(e.target.value)}/>
         </Row>
         <Row>
-          <button onClick={() => showPreview(true)}>Luo</button>
+          <button onClick={() => generateQR(url)}>Luo</button>
         </Row>
       </Div>
 
-      {isPreviewVisible && <Qr title={title} date={date} description={urlDescription} url={url} content={content}/>}
+      {qrCode && <Preview title={title} date={date} description={urlDescription} url={url} content={content} qrCode={qrCode}/>}
     </div>
   );
 }
