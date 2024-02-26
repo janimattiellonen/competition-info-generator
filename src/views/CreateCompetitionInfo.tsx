@@ -2,8 +2,6 @@ import {useState} from "react";
 
 import styled from "@emotion/styled";
 
-import {Preview} from "./Preview.tsx";
-
 import {Qr} from "./Qr.tsx";
 
 const Row = styled.div`

@@ -1,9 +1,4 @@
-import {useEffect, useState} from "react";
-import { Page, Text, View, Document, StyleSheet, PDFViewer,Image } from '@react-pdf/renderer';
-
-import {Qr} from "./Qr.tsx";
-
-import QRCode from 'qrcode'
+import { Page, Text, Document, StyleSheet, PDFViewer,Image } from '@react-pdf/renderer';
 
 import PSLogo from '../assets/puskasoturit-logo2.png';
 
