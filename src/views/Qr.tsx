@@ -49,12 +49,7 @@ export function Qr({title, date,description, url, content}: QrProps) {
       <button onClick={() => showPreview(true)}>Näytä esikatselu</button>
 
       {isPreviewVisible && <Preview title={title} date={date} description={description} qrCode={qrCode} url={url} content={content}/>}
-      {/* <QRCode
-        size={256}
-        style={{height: "auto", maxWidth: "100%", width: "100%"}}
-        value={'https://discgolfmetrix.com/2843206'}
-        viewBox={`0 0 512 512`}
-      />*/}
+
     </div>
   );
 }
