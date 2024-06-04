@@ -48,7 +48,7 @@ export function Qr({title, date,description, url, content}: QrProps) {
 
       <button onClick={() => showPreview(true)}>Näytä esikatselu</button>
 
-      {isPreviewVisible && <Preview title={title} date={date} description={description} qrCode={qrCode} url={url} content={content}/>}
+      {isPreviewVisible && <Preview title={title} date={date} description={description} qrCode={qrCode} url={url} content={content} competitionHost={'puskasoturit'}/>}
 
     </div>
   );
