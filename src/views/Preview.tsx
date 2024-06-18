@@ -41,10 +41,11 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   mainUrl: {
-    fontSize: 30,
+    fontSize: 20,
     textAlign: 'left',
     color: 'blue',
-    marginBottom: 30,
+    marginTop: 10,
+    marginBottom: 20,
   },
   minorUrl: {
     color: 'blue',
