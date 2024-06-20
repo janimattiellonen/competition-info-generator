@@ -80,6 +80,7 @@ export function CreateCompetitionInfo() {
           <select name="competitionHost" onChange={(e) => setCompetitionHost(e.target.value)}>
             <option value="puskasoturit" selected={competitionHost === 'puskasoturit'}>Puskasoturit ry</option>
             <option value="fribakisat" selected={competitionHost === 'fribakisat'}>Fribakisat.fi</option>
+            <option value="nbdg" selected={competitionHost === 'nbdg'}>NBDG</option>
           </select>
         </Row>
       </Div>
