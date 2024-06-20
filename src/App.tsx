@@ -5,7 +5,7 @@ import './App.css'
 
 function App() {
   return <Routes>
-    <Route path="/create" element={<CreateCompetitionInfo />} />
+    <Route path="/" element={<CreateCompetitionInfo />} />
   </Routes>
 }
 
