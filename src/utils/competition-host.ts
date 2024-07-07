@@ -2,6 +2,7 @@
 import PSLogo from '../assets/puskasoturit-logo2.png';
 import FribaKisatLogo from '../assets/Fribakisat.png';
 import NBDGLogo from '../assets/nbdg.png';
+import TTLogo from '../assets/tt.png';
 
 type CompetitionHostConfigType = {
   key: string;
@@ -25,6 +26,15 @@ export function getCompetitionHostConfig(competitionHostKey: string): Competitio
       name: 'NBDG',
       image: NBDGLogo,
       url: 'https://nbdg.fi/'
+    }
+  }
+
+  if (competitionHostKey === 'tt') {
+    return {
+      key: 't',
+      name: 'Talin Tallaajat',
+      image: TTLogo,
+      url: 'https://www.tallaajat.org/'
     }
   }
 
