@@ -62,18 +62,20 @@ const styles = StyleSheet.create({
 });
 
 type PreviewProps = {
-  title: string;
-  date: string;
-  description: string;
-  qrCode: string;
-  url: string;
-  content: string;
-  competitionHost: string
+  title?: string;
+  date?: string;
+  description?: string;
+  qrCode?: string;
+  url?: string;
+  content?: string;
+  competitionHost?: string
 }
 export function Preview({title, date, qrCode, description, url, content, competitionHost}: PreviewProps) {
+  if (!competitionHost) {
+    return null;
+  }
 
   const competitionHostConfig = getCompetitionHostConfig(competitionHost);
-
 
   return (
     <PDFViewer style={{width: '100%', height: '1500px'}}>
