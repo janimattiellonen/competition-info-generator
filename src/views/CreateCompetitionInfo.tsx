@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import QRCode from 'qrcode'
 
 import styled from "@emotion/styled";
@@ -13,6 +13,15 @@ const Row = styled.div`
     
     input {
         width: 250px
+    }
+    
+`;
+
+const CheckBoxRow = styled(Row)`
+    flex-direction: row;
+    
+    input {
+        width: 50px;
     }
 `;
 
@@ -37,6 +46,17 @@ const Div = styled.div`
     gap: 1rem;
 `;
 
+type FormData = {
+  title?: string;
+  date?: string;
+  urlDescription?: string;
+  url?: string;
+  content?: string;
+  qrCode?: string;
+  competitionHost?: string;
+  noAutoRefresh?: boolean;
+}
+
 export function CreateCompetitionInfo() {
   const [title, setTitle] = useState<string>('');
   const [date, setDate] = useState<string>('');
@@ -45,6 +65,28 @@ export function CreateCompetitionInfo() {
   const [content, setContent] = useState<string>('');
   const [qrCode, setQrCode] = useState<string>('');
   const [competitionHost, setCompetitionHost] = useState<string>('puskasoturit');
+  const [noAutoRefresh, setNoAutoRefresh] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormData>({});
+  const [forceRefresh, setForceRefresh] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log('Loppa');
+    if (noAutoRefresh && !forceRefresh) {
+      return;
+    }
+    setFormData({
+      ...formData,
+      title,
+      date,
+      url,
+      qrCode,
+      content,
+      urlDescription,
+      competitionHost
+    })
+    setForceRefresh(false);
+  }, [title, date, url, urlDescription, content, qrCode, competitionHost, forceRefresh]);
+
 
   const generateQR = async (text: string) => {
     if (!text)  {
@@ -54,6 +96,7 @@ export function CreateCompetitionInfo() {
     try {
       const qrData = await QRCode.toDataURL(text)
 
+      setForceRefresh(true);
       setQrCode(qrData);
     } catch (err) {
       console.error(err)
@@ -89,8 +132,14 @@ export function CreateCompetitionInfo() {
             <label htmlFor="url">Kisan osoite* </label>
             <input id="url" name="url" value={url} onChange={(e) => setUrl(e.target.value)} aria-required aria-invalid={!url} />
           </Row>
+
+          <CheckBoxRow>
+            <label htmlFor="noAutoRefresh">Älä päivitä reaaliajassa</label>
+            <input id="noAutoRefresh" type="checkbox" name="noAutoRefresh" checked={noAutoRefresh} onChange={ () => setNoAutoRefresh(!noAutoRefresh)} />
+          </CheckBoxRow>
+
           <Row>
-            <button disabled={!url} onClick={() => generateQR(url)}>Luo</button>
+            <button disabled={!url} onClick={() => generateQR(url)}>Generoi</button>
           </Row>
 
           <Row>
@@ -105,7 +154,7 @@ export function CreateCompetitionInfo() {
         </Div>
       </div>
       {qrCode &&
-          <Preview title={title} date={date} description={urlDescription} url={url} content={content} qrCode={qrCode} competitionHost={competitionHost}/>}
+          <Preview title={formData.title} date={formData.date} description={formData.urlDescription} url={formData.url} content={formData.content} qrCode={formData.qrCode} competitionHost={formData.competitionHost}/>}
     </MainFlex>
   );
 }
