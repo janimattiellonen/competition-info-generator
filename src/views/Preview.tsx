@@ -1,7 +1,5 @@
 import { Page, Text, Document, StyleSheet, PDFViewer,Image } from '@react-pdf/renderer';
 
-// import PSLogo from '../assets/puskasoturit-logo2.png';
-
 import {getCompetitionHostConfig} from "../utils/competition-host.ts";
 
 const styles = StyleSheet.create({
@@ -69,20 +67,23 @@ type PreviewProps = {
   url?: string;
   content?: string;
   competitionHost?: string
+  overrideCompetitionHost?: boolean;
+  customCompetitionHostName?: string;
+  customCompetitionHostUrl?: string;
 }
-export function Preview({title, date, qrCode, description, url, content, competitionHost}: PreviewProps) {
-  if (!competitionHost) {
+export function Preview({title, date, qrCode, description, url, content, competitionHost, overrideCompetitionHost, customCompetitionHostName, customCompetitionHostUrl}: PreviewProps) {
+  if (!competitionHost && !overrideCompetitionHost) {
     return null;
   }
 
-  const competitionHostConfig = getCompetitionHostConfig(competitionHost);
+  const competitionHostConfig = getCompetitionHostConfig(competitionHost, overrideCompetitionHost, customCompetitionHostName, customCompetitionHostUrl);
 
   return (
     <PDFViewer style={{width: '100%', height: '1500px'}}>
     <Document>
       <Page size="A4" style={styles.page} >
-        <Image style={styles.logoLeft} src={competitionHostConfig.image}/>
-        <Image style={styles.logoRight} src={competitionHostConfig.image}/>
+        {competitionHostConfig.image !== '' && <Image style={styles.logoLeft} src={competitionHostConfig.image} />}
+        {competitionHostConfig.image !== '' && <Image style={styles.logoRight} src={competitionHostConfig.image}/>}
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{date}</Text>
         <Text style={styles.urlDescription}>{description}</Text>
@@ -90,7 +91,7 @@ export function Preview({title, date, qrCode, description, url, content, competi
         <Text style={styles.content}>{content}</Text>
 
         <Text style={{marginTop: 20, marginBottom: 5}}>Terveisin</Text>
-        <Text>{competitionHostConfig.name} (<Text style={styles.minorUrl}>{competitionHostConfig.url}</Text>)</Text>
+        <Text>{competitionHostConfig.name} {competitionHostConfig.url && <Text>(<Text style={styles.minorUrl}>{competitionHostConfig.url}</Text>)</Text>}</Text>
         <Image src={qrCode} style={styles.image}/>
         <Text style={{textAlign: 'center'}}>(<Text style={styles.minorUrl}>{url}</Text>)</Text>
       </Page>

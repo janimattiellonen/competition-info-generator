@@ -4,13 +4,27 @@ import FribaKisatLogo from '../assets/Fribakisat.png';
 import NBDGLogo from '../assets/nbdg.png';
 import TTLogo from '../assets/tt.png';
 
-type CompetitionHostConfigType = {
+export type CompetitionHostConfigType = {
   key: string;
   name: string;
   image: string;
-  url: string
+  url: string;
 }
-export function getCompetitionHostConfig(competitionHostKey: string): CompetitionHostConfigType {
+export function getCompetitionHostConfig(
+  competitionHostKey?: string,
+  overrideCompetitionHost?: boolean,
+  customCompetitionHostName?: string,
+  customCompetitionHostUrl?: string
+): CompetitionHostConfigType {
+  if (overrideCompetitionHost) {
+    return {
+      key: customCompetitionHostName || '',
+      name: customCompetitionHostName || '',
+      image: '',
+      url: customCompetitionHostUrl || ''
+    }
+  }
+
   if (competitionHostKey === 'fribakisat') {
     return {
       key: 'fribakisat',

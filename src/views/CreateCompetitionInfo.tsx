@@ -5,17 +5,9 @@ import styled from "@emotion/styled";
 
 import {Preview} from "./Preview.tsx";
 
-const Row = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-    
-    input {
-        width: 250px
-    }
-    
-`;
+import {CompetitionHostConfigType} from "../utils/competition-host.ts";
+
+import {Row} from "../components/Row.tsx";
 
 const CheckBoxRow = styled(Row)`
     flex-direction: row;
@@ -26,8 +18,6 @@ const CheckBoxRow = styled(Row)`
 `;
 
 const MainFlex = styled.div`
-
-    
     div:first-of-type {
         flex-basis: 50%;
     }
@@ -55,6 +45,11 @@ type FormData = {
   qrCode?: string;
   competitionHost?: string;
   noAutoRefresh?: boolean;
+  overrideCompetitionHost?: boolean;
+  overriddenCompetitionHostConfig?: CompetitionHostConfigType;
+  customCompetitionHostName?: string;
+  customCompetitionHostImageUrl?: string;
+  customCompetitionHostUrl?: string;
 }
 
 export function CreateCompetitionInfo() {
@@ -66,14 +61,17 @@ export function CreateCompetitionInfo() {
   const [qrCode, setQrCode] = useState<string>('');
   const [competitionHost, setCompetitionHost] = useState<string>('puskasoturit');
   const [noAutoRefresh, setNoAutoRefresh] = useState<boolean>(false);
+  const [customCompetitionHostName, setCustomCompetitionHostName] = useState<string>('');
+  const [customCompetitionHostUrl, setCustomCompetitionHostUrl] = useState<string>('');
   const [formData, setFormData] = useState<FormData>({});
   const [forceRefresh, setForceRefresh] = useState<boolean>(false);
+  const [overrideCompetitionHost, setOverrideCompetitionHost] = useState<boolean>(false)
 
   useEffect(() => {
-    console.log('Loppa');
     if (noAutoRefresh && !forceRefresh) {
       return;
     }
+
     setFormData({
       ...formData,
       title,
@@ -82,11 +80,13 @@ export function CreateCompetitionInfo() {
       qrCode,
       content,
       urlDescription,
-      competitionHost
+      competitionHost,
+      overrideCompetitionHost,
+      customCompetitionHostName,
+      customCompetitionHostUrl,
     })
     setForceRefresh(false);
-  }, [title, date, url, urlDescription, content, qrCode, competitionHost, forceRefresh]);
-
+  }, [title, date, url, urlDescription, content, qrCode, competitionHost, forceRefresh, overrideCompetitionHost, customCompetitionHostName, customCompetitionHostUrl]);
 
   const generateQR = async (text: string) => {
     if (!text)  {
@@ -133,28 +133,65 @@ export function CreateCompetitionInfo() {
             <input id="url" name="url" value={url} onChange={(e) => setUrl(e.target.value)} aria-required aria-invalid={!url} />
           </Row>
 
-          <CheckBoxRow>
-            <label htmlFor="noAutoRefresh">Älä päivitä reaaliajassa</label>
-            <input id="noAutoRefresh" type="checkbox" name="noAutoRefresh" checked={noAutoRefresh} onChange={ () => setNoAutoRefresh(!noAutoRefresh)} />
-          </CheckBoxRow>
-
-          <Row>
-            <button disabled={!url} onClick={() => generateQR(url)}>Generoi</button>
-          </Row>
-
           <Row>
             <label htmlFor="">Kilpailun vetäjä</label>
-            <select name="competitionHost" onChange={(e) => setCompetitionHost(e.target.value)}>
+            <select name="competitionHost" onChange={(e) => setCompetitionHost(e.target.value)} disabled={overrideCompetitionHost}>
               <option value="puskasoturit" selected={competitionHost === 'puskasoturit'}>Puskasoturit ry</option>
               <option value="fribakisat" selected={competitionHost === 'fribakisat'}>Fribakisat.fi</option>
               <option value="nbdg" selected={competitionHost === 'nbdg'}>NBDG</option>
               <option value="tt" selected={competitionHost === 'tt'}>Talin Tallaajat</option>
             </select>
           </Row>
+
+          <CheckBoxRow>
+            <label htmlFor="overrideCompetitionHost">Muokattu kilpailun vetäjä</label>
+            <input id="overrideCompetitionHost" name="overrideCompetitionHost" type="checkbox" checked={overrideCompetitionHost} onChange={ () => setOverrideCompetitionHost(!overrideCompetitionHost)} />
+          </CheckBoxRow>
+
+          {overrideCompetitionHost && (<>
+              <Row>
+                <label htmlFor="customCompetitionHostName">Nimi</label>
+                <input id="customCompetitionHostName" name="customCompetitionHostName" value={customCompetitionHostName} onChange={(e) => setCustomCompetitionHostName(e.target.value)} />
+              </Row>
+
+              {/*
+              <Row>
+                <label htmlFor="customCompetitionHostImageUrl">Kuvaosoite</label>
+                <input id="customCompetitionHostImageUrl" name="customCompetitionHostImageUrl"  value={customCompetitionHostImageUrl} onChange={(e) => setCustomCompetitionHostImageUrl(e.target.value)}/>
+              </Row>*/}
+
+              <Row>
+                <label htmlFor="customCompetitionHostUrl">Kotisivut</label>
+                <input id="customCompetitionHostUrl" name="customCompetitionHostUrl"  value={customCompetitionHostUrl} onChange={(e) => setCustomCompetitionHostUrl(e.target.value)} />
+              </Row>
+            </>)
+          }
+
+          <CheckBoxRow>
+            <label htmlFor="noAutoRefresh">Älä päivitä reaaliajassa</label>
+            <input id="noAutoRefresh" type="checkbox" name="noAutoRefresh" checked={noAutoRefresh} onChange={ () => setNoAutoRefresh(!noAutoRefresh)} />
+          </CheckBoxRow>
+
+
+          <Row>
+            <button disabled={!url} onClick={() => generateQR(url)}>Generoi</button>
+          </Row>
         </Div>
       </div>
       {qrCode &&
-          <Preview title={formData.title} date={formData.date} description={formData.urlDescription} url={formData.url} content={formData.content} qrCode={formData.qrCode} competitionHost={formData.competitionHost}/>}
+          <Preview
+              title={formData.title}
+              date={formData.date}
+              description={formData.urlDescription}
+              url={formData.url}
+              content={formData.content}
+              qrCode={formData.qrCode}
+              competitionHost={formData.competitionHost}
+              overrideCompetitionHost={formData.overrideCompetitionHost}
+              customCompetitionHostName={formData.customCompetitionHostName}
+              customCompetitionHostUrl={formData.customCompetitionHostUrl}
+          />
+      }
     </MainFlex>
   );
 }
