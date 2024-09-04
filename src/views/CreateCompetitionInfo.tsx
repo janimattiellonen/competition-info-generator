@@ -1,5 +1,7 @@
 import {useState, useEffect} from "react";
 import QRCode from 'qrcode'
+import {format as dateFnsFormat} from "date-fns";
+import {fi} from "date-fns/locale";
 
 import styled from "@emotion/styled";
 
@@ -8,6 +10,8 @@ import {Preview} from "./Preview.tsx";
 import {CompetitionHostConfigType} from "../utils/competition-host.ts";
 
 import {Row} from "../components/Row.tsx";
+
+import {fetchMetrixData} from "../utils/metrix-client.ts";
 
 const CheckBoxRow = styled(Row)`
     flex-direction: row;
@@ -103,6 +107,36 @@ export function CreateCompetitionInfo() {
     }
   }
 
+  const handleFetch = async () => {
+    const data = await fetchMetrixData(url);
+
+    const competition = data?.Competition;
+
+    if (competition?.Name) {
+      setTitle(competition?.Name);
+    }
+
+    if (competition?.ID) {
+      setUrl(`https://discgolfmetrix.com/${competition?.ID}`);
+    }
+
+    if (competition?.Date) {
+      const formattedDate = dateFnsFormat(new Date(competition?.Date), 'd.M.yyyy', {
+        locale: fi
+      });
+
+      if(competition?.Time) {
+        const formattedTime = dateFnsFormat(new Date(`${competition?.Date} ${competition?.Time}`), 'HH:mm', {
+          locale: fi
+        });
+
+        setDate(`${formattedDate} ${formattedTime}`);
+      } else {
+        setDate(formattedDate);
+      }
+    }
+  }
+
   return (
     <MainFlex>
       <div>
@@ -131,6 +165,7 @@ export function CreateCompetitionInfo() {
           <Row>
             <label htmlFor="url">Kisan osoite* </label>
             <input id="url" name="url" value={url} onChange={(e) => setUrl(e.target.value)} aria-required aria-invalid={!url} />
+            <button onClick={handleFetch}>Hae Metrix-kisan tiedot</button>
           </Row>
 
           <Row>
