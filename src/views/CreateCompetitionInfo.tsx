@@ -116,7 +116,7 @@ export function CreateCompetitionInfo() {
       setTitle(competition?.Name);
     }
 
-    if (competition?.ID) {
+    if (String(competition?.ID) === String(url)) {
       setUrl(`https://discgolfmetrix.com/${competition?.ID}`);
     }
 
