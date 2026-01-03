@@ -22,17 +22,16 @@ export function Qr({ title, date, description, url, content }: QrProps) {
   const [qrCode, setQrCode] = useState<string>('');
   const [isPreviewVisible, showPreview] = useState<boolean>(false);
 
-  const generateQR = async (text: string) => {
-    try {
-      const qrData = await QRCode.toDataURL(text);
-
-      setQrCode(qrData);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
+    const generateQR = async (text: string) => {
+      try {
+        const qrData = await QRCode.toDataURL(text);
+        setQrCode(qrData);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     generateQR(url);
   }, [url]);
 

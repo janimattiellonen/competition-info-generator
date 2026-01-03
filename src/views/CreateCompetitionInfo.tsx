@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import QRCode from 'qrcode';
 import { format as dateFnsFormat } from 'date-fns';
 import { fi } from 'date-fns/locale';
@@ -6,8 +6,6 @@ import { fi } from 'date-fns/locale';
 import styled from '@emotion/styled';
 
 import { Preview } from './Preview.tsx';
-
-import { CompetitionHostConfigType } from '../utils/competition-host.ts';
 
 import { Row } from '../components/Row.tsx';
 
@@ -40,22 +38,6 @@ const Div = styled.div`
   gap: 1rem;
 `;
 
-type FormData = {
-  title?: string;
-  date?: string;
-  urlDescription?: string;
-  url?: string;
-  content?: string;
-  qrCode?: string;
-  competitionHost?: string;
-  noAutoRefresh?: boolean;
-  overrideCompetitionHost?: boolean;
-  overriddenCompetitionHostConfig?: CompetitionHostConfigType;
-  customCompetitionHostName?: string;
-  customCompetitionHostImageUrl?: string;
-  customCompetitionHostUrl?: string;
-};
-
 export function CreateCompetitionInfo() {
   const [title, setTitle] = useState<string>('');
   const [date, setDate] = useState<string>('');
@@ -70,17 +52,11 @@ export function CreateCompetitionInfo() {
     useState<string>('');
   const [customCompetitionHostUrl, setCustomCompetitionHostUrl] =
     useState<string>('');
-  const [formData, setFormData] = useState<FormData>({});
-  const [forceRefresh, setForceRefresh] = useState<boolean>(false);
   const [overrideCompetitionHost, setOverrideCompetitionHost] =
     useState<boolean>(false);
 
-  useEffect(() => {
-    if (noAutoRefresh && !forceRefresh) {
-      return;
-    }
-
-    setFormData({
+  const formData = useMemo(
+    () => ({
       title,
       date,
       url,
@@ -91,22 +67,20 @@ export function CreateCompetitionInfo() {
       overrideCompetitionHost,
       customCompetitionHostName,
       customCompetitionHostUrl,
-    });
-    setForceRefresh(false);
-  }, [
-    title,
-    date,
-    url,
-    urlDescription,
-    content,
-    qrCode,
-    competitionHost,
-    forceRefresh,
-    noAutoRefresh,
-    overrideCompetitionHost,
-    customCompetitionHostName,
-    customCompetitionHostUrl,
-  ]);
+    }),
+    [
+      title,
+      date,
+      url,
+      urlDescription,
+      content,
+      qrCode,
+      competitionHost,
+      overrideCompetitionHost,
+      customCompetitionHostName,
+      customCompetitionHostUrl,
+    ]
+  );
 
   const generateQR = async (text: string) => {
     if (!text) {
@@ -116,7 +90,6 @@ export function CreateCompetitionInfo() {
     try {
       const qrData = await QRCode.toDataURL(text);
 
-      setForceRefresh(true);
       setQrCode(qrData);
     } catch (err) {
       console.error(err);
