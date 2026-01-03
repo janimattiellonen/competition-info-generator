@@ -1,4 +1,3 @@
-
 import PSLogo from '../assets/puskasoturit-logo2.png';
 import FribaKisatLogo from '../assets/Fribakisat.png';
 import NBDGLogo from '../assets/nbdg.png';
@@ -9,7 +8,7 @@ export type CompetitionHostConfigType = {
   name: string;
   image: string;
   url: string;
-}
+};
 export function getCompetitionHostConfig(
   competitionHostKey?: string,
   overrideCompetitionHost?: boolean,
@@ -21,8 +20,8 @@ export function getCompetitionHostConfig(
       key: customCompetitionHostName || '',
       name: customCompetitionHostName || '',
       image: '',
-      url: customCompetitionHostUrl || ''
-    }
+      url: customCompetitionHostUrl || '',
+    };
   }
 
   if (competitionHostKey === 'fribakisat') {
@@ -30,8 +29,8 @@ export function getCompetitionHostConfig(
       key: 'fribakisat',
       name: 'Fribakisat.fi',
       image: FribaKisatLogo,
-      url: 'https://www.fribakisat.fi/'
-    }
+      url: 'https://www.fribakisat.fi/',
+    };
   }
 
   if (competitionHostKey === 'nbdg') {
@@ -39,8 +38,8 @@ export function getCompetitionHostConfig(
       key: 'nbdg',
       name: 'NBDG',
       image: NBDGLogo,
-      url: 'https://nbdg.fi/'
-    }
+      url: 'https://nbdg.fi/',
+    };
   }
 
   if (competitionHostKey === 'tt') {
@@ -48,15 +47,14 @@ export function getCompetitionHostConfig(
       key: 't',
       name: 'Talin Tallaajat',
       image: TTLogo,
-      url: 'https://www.tallaajat.org/'
-    }
+      url: 'https://www.tallaajat.org/',
+    };
   }
 
   return {
     key: 'puskasoturit',
     name: 'Puskasoturit ry',
     image: PSLogo,
-    url: 'https://puskasoturit.com/'
-  }
-
+    url: 'https://puskasoturit.com/',
+  };
 }
