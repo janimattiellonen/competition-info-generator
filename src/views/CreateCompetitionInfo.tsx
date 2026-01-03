@@ -81,7 +81,6 @@ export function CreateCompetitionInfo() {
     }
 
     setFormData({
-      ...formData,
       title,
       date,
       url,
@@ -103,6 +102,7 @@ export function CreateCompetitionInfo() {
     qrCode,
     competitionHost,
     forceRefresh,
+    noAutoRefresh,
     overrideCompetitionHost,
     customCompetitionHostName,
     customCompetitionHostUrl,
@@ -223,27 +223,14 @@ export function CreateCompetitionInfo() {
             <label htmlFor="">Kilpailun vetäjä</label>
             <select
               name="competitionHost"
+              value={competitionHost}
               onChange={(e) => setCompetitionHost(e.target.value)}
               disabled={overrideCompetitionHost}
             >
-              <option
-                value="puskasoturit"
-                selected={competitionHost === 'puskasoturit'}
-              >
-                Puskasoturit ry
-              </option>
-              <option
-                value="fribakisat"
-                selected={competitionHost === 'fribakisat'}
-              >
-                Fribakisat.fi
-              </option>
-              <option value="nbdg" selected={competitionHost === 'nbdg'}>
-                NBDG
-              </option>
-              <option value="tt" selected={competitionHost === 'tt'}>
-                Talin Tallaajat
-              </option>
+              <option value="puskasoturit">Puskasoturit ry</option>
+              <option value="fribakisat">Fribakisat.fi</option>
+              <option value="nbdg">NBDG</option>
+              <option value="tt">Talin Tallaajat</option>
             </select>
           </Row>
 
