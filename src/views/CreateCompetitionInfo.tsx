@@ -4,6 +4,7 @@ import { format as dateFnsFormat } from 'date-fns';
 import { fi } from 'date-fns/locale';
 
 import styled from '@emotion/styled';
+import { Button } from '@mantine/core';
 
 import { Preview } from './Preview.tsx';
 
@@ -15,29 +16,123 @@ import { fetchMetrixData } from '../utils/metrix-client.ts';
 
 const CheckBoxRow = styled(Row)`
   flex-direction: row;
+  align-items: flex-start;
+  gap: 0.75rem;
 
-  input {
-    width: 50px;
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: #228be6;
+  }
+
+  label {
+    cursor: pointer;
+    margin: 0;
+    flex: 1;
+    line-height: 1.5;
   }
 `;
 
 const MainFlex = styled.div`
-  div:first-of-type {
-    flex-basis: 50%;
-  }
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 
   @media (min-width: 1200px) {
-    display: flex;
     flex-direction: row;
+    height: 100vh;
+    overflow: hidden;
+
+    & > div:first-of-type {
+      flex: 0 0 35%;
+      min-width: 0;
+      overflow-y: auto;
+     /* overflow-x: hidden;*/
+      height: 100vh;
+    }
   }
 `;
 
 const Div = styled.div`
-  width: 50%;
+  width: 100%;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
-  margin: 3rem;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  gap: 1.25rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  @media (min-width: 768px) {
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+
+  @media (min-width: 1200px) {
+      max-width: 85%;
+      margin: 1.5rem;
+      padding: 1.5rem 2.5rem 1.5rem 1.5rem;
+  }
+    
+  @media (min-width: 1420px) {
+    max-width: 90%;
+    margin: 1.5rem;
+    padding: 1.5rem 2.5rem 1.5rem 1.5rem;
+  }
+`;
+
+const PageHeader = styled.h1`
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 1.5rem 0 0 0;
+  color: #212529;
+
+  @media (min-width: 768px) {
+    font-size: 2rem;
+    margin: 2rem 0 0 0;
+  }
+`;
+
+const SectionDivider = styled.div`
+  height: 1px;
+  background-color: #dee2e6;
+  margin: 1rem 0;
+`;
+
+const FormSection = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
+`;
+
+const PreviewWrapper = styled.div`
+  width: 100%;
+  margin: 1rem auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 600px;
+
+  @media (min-width: 768px) {
+    margin: 2rem auto;
+    min-height: 800px;
+  }
+
+  @media (min-width: 1200px) {
+    flex: 1;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    height: 100vh;
+    min-height: 100vh;
+  }
 `;
 
 export function CreateCompetitionInfo() {
@@ -219,62 +314,73 @@ export function CreateCompetitionInfo() {
   return (
     <MainFlex>
       <div>
-        <h1>Luo kilpailun infolappunen</h1>
+        <PageHeader>Luo kilpailun infolappunen</PageHeader>
         <Div>
-          <Row>
-            <label htmlFor="title">Otsikko</label>
-            <input
-              id="title"
-              name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </Row>
+          <FormSection>
+            <Row>
+              <label htmlFor="title">Otsikko</label>
+              <input
+                id="title"
+                name="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </Row>
 
-          <Row>
-            <label htmlFor="date">Päivämäärä</label>
-            <input
-              id="date"
-              name="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </Row>
+            <Row>
+              <label htmlFor="date">Päivämäärä</label>
+              <input
+                id="date"
+                name="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </Row>
 
-          <Row>
-            <label htmlFor="urlDescription">Kuvaus</label>
-            <input
-              id="urlDescription"
-              name="urlDescription"
-              value={urlDescription}
-              onChange={(e) => setUrlDescription(e.target.value)}
-            />
-          </Row>
+            <Row>
+              <label htmlFor="urlDescription">Kuvaus</label>
+              <input
+                id="urlDescription"
+                name="urlDescription"
+                value={urlDescription}
+                onChange={(e) => setUrlDescription(e.target.value)}
+              />
+            </Row>
 
-          <Row>
-            <label htmlFor="content">Sisältö</label>
-            <input
-              id="content"
-              name="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-          </Row>
+            <Row>
+              <label htmlFor="content">Sisältö</label>
+              <input
+                id="content"
+                name="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+              />
+            </Row>
+          </FormSection>
 
-          <Row>
-            <label htmlFor="url">Kisan osoite* </label>
-            <input
-              id="url"
-              name="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              aria-required
-              aria-invalid={!url}
-            />
-            <button onClick={handleFetch}>Hae Metrix-kisan tiedot</button>
-          </Row>
+          <SectionDivider />
 
-          <Row>
+          <FormSection>
+            <Row>
+              <label htmlFor="url">Kisan osoite* </label>
+              <input
+                id="url"
+                name="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                aria-required
+                aria-invalid={!url}
+              />
+              <Button onClick={handleFetch} variant="light">
+                Hae Metrix-kisan tiedot
+              </Button>
+            </Row>
+          </FormSection>
+
+          <SectionDivider />
+
+          <FormSection>
+            <Row>
             <label htmlFor="backgroundImage">Taustakuva</label>
             <input
               id="backgroundImage"
@@ -285,9 +391,14 @@ export function CreateCompetitionInfo() {
               ref={fileInputRef}
             />
             {backgroundImage && (
-              <button type="button" onClick={handleRemoveBackgroundImage}>
+              <Button
+                type="button"
+                onClick={handleRemoveBackgroundImage}
+                variant="light"
+                color="red"
+              >
                 Poista taustakuva
-              </button>
+              </Button>
             )}
           </Row>
 
@@ -412,31 +523,43 @@ export function CreateCompetitionInfo() {
               />
             </>
           )}
+          </FormSection>
+
+          <SectionDivider />
 
           <Row>
-            <button disabled={!url} onClick={() => generateQR(url)}>
+            <Button
+              disabled={!url}
+              onClick={() => generateQR(url)}
+              variant="filled"
+              size="lg"
+              fullWidth
+              style={{ maxWidth: '500px' }}
+            >
               Generoi
-            </button>
+            </Button>
           </Row>
         </Div>
       </div>
       {qrCode && (
-        <Preview
-          title={formData.title}
-          date={formData.date}
-          description={formData.urlDescription}
-          url={formData.url}
-          content={formData.content}
-          qrCode={formData.qrCode}
-          competitionHost={formData.competitionHost}
-          overrideCompetitionHost={formData.overrideCompetitionHost}
-          customCompetitionHostName={formData.customCompetitionHostName}
-          customCompetitionHostUrl={formData.customCompetitionHostUrl}
-          useTextOverlay={formData.useTextOverlay}
-          textColor={formData.textColor}
-          linkColor={formData.linkColor}
-          backgroundImage={formData.backgroundImage}
-        />
+        <PreviewWrapper>
+          <Preview
+            title={formData.title}
+            date={formData.date}
+            description={formData.urlDescription}
+            url={formData.url}
+            content={formData.content}
+            qrCode={formData.qrCode}
+            competitionHost={formData.competitionHost}
+            overrideCompetitionHost={formData.overrideCompetitionHost}
+            customCompetitionHostName={formData.customCompetitionHostName}
+            customCompetitionHostUrl={formData.customCompetitionHostUrl}
+            useTextOverlay={formData.useTextOverlay}
+            textColor={formData.textColor}
+            linkColor={formData.linkColor}
+            backgroundImage={formData.backgroundImage}
+          />
+        </PreviewWrapper>
       )}
     </MainFlex>
   );
