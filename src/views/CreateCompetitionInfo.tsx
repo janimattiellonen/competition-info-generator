@@ -54,6 +54,7 @@ export function CreateCompetitionInfo() {
     useState<string>('');
   const [overrideCompetitionHost, setOverrideCompetitionHost] =
     useState<boolean>(false);
+  const [useTextOverlay, setUseTextOverlay] = useState<boolean>(false);
 
   const formData = useMemo(
     () => ({
@@ -67,6 +68,7 @@ export function CreateCompetitionInfo() {
       overrideCompetitionHost,
       customCompetitionHostName,
       customCompetitionHostUrl,
+      useTextOverlay,
     }),
     [
       title,
@@ -79,6 +81,7 @@ export function CreateCompetitionInfo() {
       overrideCompetitionHost,
       customCompetitionHostName,
       customCompetitionHostUrl,
+      useTextOverlay,
     ]
   );
 
@@ -222,6 +225,19 @@ export function CreateCompetitionInfo() {
             />
           </CheckBoxRow>
 
+          <CheckBoxRow>
+            <label htmlFor="useTextOverlay">
+              Harmaannuta tekstien tausta
+            </label>
+            <input
+              id="useTextOverlay"
+              name="useTextOverlay"
+              type="checkbox"
+              checked={useTextOverlay}
+              onChange={() => setUseTextOverlay(!useTextOverlay)}
+            />
+          </CheckBoxRow>
+
           {overrideCompetitionHost && (
             <>
               <Row>
@@ -282,6 +298,7 @@ export function CreateCompetitionInfo() {
           overrideCompetitionHost={formData.overrideCompetitionHost}
           customCompetitionHostName={formData.customCompetitionHostName}
           customCompetitionHostUrl={formData.customCompetitionHostUrl}
+          useTextOverlay={formData.useTextOverlay}
         />
       )}
     </MainFlex>

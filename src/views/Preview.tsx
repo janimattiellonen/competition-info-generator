@@ -9,7 +9,7 @@ import {
 } from '@react-pdf/renderer';
 
 import { getCompetitionHostConfig } from '../utils/competition-host.ts';
-import backgroundImage from '../assets/tyyni.png';
+import backgroundImage from '../assets/tali.png';
 
 const styles = StyleSheet.create({
   backgroundImage: {
@@ -39,45 +39,56 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
-  page: {
-
-
-
+  page: {},
+  // Semi-transparent overlays for text sections
+  textOverlay: {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  headerOverlay: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    marginTop: 65,
   },
   title: {
     fontSize: 48,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
-    marginTop: 75,
+    marginBottom: 5,
+    color: '#000000',
   },
   subtitle: {
     fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 30,
+    color: '#000000',
   },
   urlDescription: {
     fontSize: 20,
     textAlign: 'left',
+    color: '#000000',
   },
   mainUrl: {
     fontSize: 20,
     textAlign: 'left',
-    color: 'blue',
-    marginTop: 10,
-    marginBottom: 20,
+    color: '#0066CC',
+    marginTop: 5,
   },
   minorUrl: {
-    color: 'blue',
+    color: '#0066CC',
     fontWeight: 'bold',
   },
   content: {
     fontSize: 30,
+    color: '#000000',
   },
   image: {
-    width: 300,
-    height: 300,
+    width: 250,
+    height: 250,
     margin: '0 auto',
   },
 });
@@ -93,6 +104,7 @@ type PreviewProps = {
   overrideCompetitionHost?: boolean;
   customCompetitionHostName?: string;
   customCompetitionHostUrl?: string;
+  useTextOverlay?: boolean;
 };
 export function Preview({
   title,
@@ -105,6 +117,7 @@ export function Preview({
   overrideCompetitionHost,
   customCompetitionHostName,
   customCompetitionHostUrl,
+  useTextOverlay = false,
 }: PreviewProps) {
   if (!competitionHost && !overrideCompetitionHost) {
     return null;
@@ -129,27 +142,50 @@ export function Preview({
             {competitionHostConfig.image !== '' && (
               <Image style={styles.logoRight} src={competitionHostConfig.image} />
             )}
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.subtitle}>{date}</Text>
-            <Text style={styles.urlDescription}>{description}</Text>
-            <Text style={styles.mainUrl}>{url}</Text>
-            <Text style={styles.content}>{content}</Text>
 
-            <Text style={{ marginTop: 20, marginBottom: 5 }}>Terveisin</Text>
-            <Text style={{marginBottom: 40}}>
-              {competitionHostConfig.name}{' '}
-              {competitionHostConfig.url && (
-                <Text>
-                  (
-                  <Text style={styles.minorUrl}>{competitionHostConfig.url}</Text>
-                  )
-                </Text>
-              )}
-            </Text>
-            <Image src={qrCode} style={styles.image} />
-            <Text style={{ textAlign: 'center', marginTop: 10}}>
-              (<Text style={styles.minorUrl}>{url}</Text>)
-            </Text>
+            {/* Header section with optional semi-transparent overlay */}
+            <View style={useTextOverlay ? styles.headerOverlay : { marginTop: 65, marginBottom: 10 }}>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.subtitle}>{date}</Text>
+            </View>
+
+            {/* URL section with optional semi-transparent overlay */}
+            <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10 }}>
+              <Text style={styles.urlDescription}>{description}</Text>
+              <Text style={styles.mainUrl}>{url}</Text>
+            </View>
+
+            {/* Content section with optional semi-transparent overlay */}
+            {content && (
+              <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10 }}>
+                <Text style={styles.content}>{content}</Text>
+              </View>
+            )}
+
+            {/* Footer section with optional semi-transparent overlay */}
+            <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10 }}>
+              <Text style={{ marginBottom: 5, color: '#000000' }}>Terveisin</Text>
+              <Text style={{ color: '#000000' }}>
+                {competitionHostConfig.name}{' '}
+                {competitionHostConfig.url && (
+                  <Text>
+                    (
+                    <Text style={styles.minorUrl}>
+                      {competitionHostConfig.url}
+                    </Text>
+                    )
+                  </Text>
+                )}
+              </Text>
+            </View>
+
+            {/* QR Code section with optional semi-transparent overlay */}
+            <View style={useTextOverlay ? [styles.textOverlay, { alignItems: 'center' }] : { alignItems: 'center', marginBottom: 10 }}>
+              <Image src={qrCode} style={styles.image} />
+              <Text style={{ textAlign: 'center', marginTop: 10, color: '#000000' }}>
+                (<Text style={styles.minorUrl}>{url}</Text>)
+              </Text>
+            </View>
           </View>
         </Page>
       </Document>
