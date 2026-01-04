@@ -9,7 +9,6 @@ import {
 } from '@react-pdf/renderer';
 
 import { getCompetitionHostConfig } from '../utils/competition-host.ts';
-import backgroundImage from '../assets/tali.png';
 
 const styles = StyleSheet.create({
   backgroundImage: {
@@ -101,6 +100,7 @@ type PreviewProps = {
   useTextOverlay?: boolean;
   textColor?: string;
   linkColor?: string;
+  backgroundImage?: string;
 };
 export function Preview({
   title,
@@ -116,6 +116,7 @@ export function Preview({
   useTextOverlay = false,
   textColor = '#000000',
   linkColor = '#0066CC',
+  backgroundImage: customBackgroundImage,
 }: PreviewProps) {
   if (!competitionHost && !overrideCompetitionHost) {
     return null;
@@ -132,7 +133,9 @@ export function Preview({
     <PDFViewer style={{ width: '100%', height: '1500px' }}>
       <Document>
         <Page size="A4" style={styles.page} >
-          <Image style={styles.backgroundImage} src={backgroundImage} />
+          {customBackgroundImage !== undefined && customBackgroundImage !== '' && (
+            <Image style={styles.backgroundImage} src={customBackgroundImage} />
+          )}
           <View style={styles.contentWrapper}>
             {competitionHostConfig.image !== '' && (
               <Image style={styles.logoLeft} src={competitionHostConfig.image} />
@@ -142,26 +145,26 @@ export function Preview({
             )}
 
             {/* Header section with optional semi-transparent overlay */}
-            <View style={useTextOverlay ? styles.headerOverlay : { marginTop: 65, marginBottom: 10 }}>
+            <View style={useTextOverlay ? styles.headerOverlay : { marginTop: 65, marginBottom: 10, padding: 15 }}>
               <Text style={[styles.title, { color: textColor }]}>{title}</Text>
               <Text style={[styles.subtitle, { color: textColor }]}>{date}</Text>
             </View>
 
             {/* URL section with optional semi-transparent overlay */}
-            <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10 }}>
+            <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10, padding: 10 }}>
               <Text style={[styles.urlDescription, { color: textColor }]}>{description}</Text>
               <Text style={[styles.mainUrl, { color: linkColor }]}>{url}</Text>
             </View>
 
             {/* Content section with optional semi-transparent overlay */}
             {content && (
-              <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10 }}>
+              <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10, padding: 10 }}>
                 <Text style={[styles.content, { color: textColor }]}>{content}</Text>
               </View>
             )}
 
             {/* Footer section with optional semi-transparent overlay */}
-            <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10 }}>
+            <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10, padding: 10 }}>
               <Text style={{ marginBottom: 5, color: textColor }}>Terveisin</Text>
               <Text style={{ color: textColor }}>
                 {competitionHostConfig.name}{' '}
@@ -178,7 +181,7 @@ export function Preview({
             </View>
 
             {/* QR Code section with optional semi-transparent overlay */}
-            <View style={useTextOverlay ? [styles.textOverlay, { alignItems: 'center' }] : { alignItems: 'center', marginBottom: 10 }}>
+            <View style={useTextOverlay ? [styles.textOverlay, { alignItems: 'center' }] : { alignItems: 'center', marginBottom: 10, padding: 10 }}>
               <Image src={qrCode} style={styles.image} />
               <Text style={{ textAlign: 'center', marginTop: 10, color: textColor }}>
                 (<Text style={[styles.minorUrl, { color: linkColor }]}>{url}</Text>)

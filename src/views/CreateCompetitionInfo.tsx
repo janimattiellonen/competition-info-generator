@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
 import { format as dateFnsFormat } from 'date-fns';
 import { fi } from 'date-fns/locale';
@@ -70,6 +70,8 @@ export function CreateCompetitionInfo() {
   const [openColorModal, setOpenColorModal] = useState<'text' | 'link' | null>(
     null
   );
+  const [backgroundImage, setBackgroundImage] = useState<string | undefined>(undefined);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Save colors to localStorage
   useEffect(() => {
@@ -99,6 +101,7 @@ export function CreateCompetitionInfo() {
       useTextOverlay,
       textColor: useCustomColors ? textColor : '#000000',
       linkColor: useCustomColors ? linkColor : '#0066CC',
+      ...(backgroundImage && { backgroundImage }),
     }),
     [
       title,
@@ -115,6 +118,7 @@ export function CreateCompetitionInfo() {
       useCustomColors,
       textColor,
       linkColor,
+      backgroundImage,
     ]
   );
 
@@ -167,6 +171,48 @@ export function CreateCompetitionInfo() {
       } else {
         setDate(formattedDate);
       }
+    }
+  };
+
+  const handleBackgroundImageUpload = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      alert('Virheellinen tiedostomuoto. Sallitut muodot: PNG, JPG, JPEG');
+      e.target.value = '';
+      return;
+    }
+
+    // Validate file size (10MB = 10 * 1024 * 1024 bytes)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert('Tiedosto on liian suuri. Maksimikoko on 10MB.');
+      e.target.value = '';
+      return;
+    }
+
+    // Convert to data URL
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      setBackgroundImage(dataUrl);
+    };
+    reader.onerror = () => {
+      alert('Tiedoston lukeminen epäonnistui');
+      e.target.value = '';
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveBackgroundImage = () => {
+    setBackgroundImage(undefined);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -226,6 +272,23 @@ export function CreateCompetitionInfo() {
               aria-invalid={!url}
             />
             <button onClick={handleFetch}>Hae Metrix-kisan tiedot</button>
+          </Row>
+
+          <Row>
+            <label htmlFor="backgroundImage">Taustakuva</label>
+            <input
+              id="backgroundImage"
+              name="backgroundImage"
+              type="file"
+              accept=".png,.jpg,.jpeg"
+              onChange={handleBackgroundImageUpload}
+              ref={fileInputRef}
+            />
+            {backgroundImage && (
+              <button type="button" onClick={handleRemoveBackgroundImage}>
+                Poista taustakuva
+              </button>
+            )}
           </Row>
 
           <Row>
@@ -372,6 +435,7 @@ export function CreateCompetitionInfo() {
           useTextOverlay={formData.useTextOverlay}
           textColor={formData.textColor}
           linkColor={formData.linkColor}
+          backgroundImage={formData.backgroundImage}
         />
       )}
     </MainFlex>

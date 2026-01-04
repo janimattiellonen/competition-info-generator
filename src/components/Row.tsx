@@ -9,7 +9,7 @@ const StyledDiv = styled.div`
   gap: 0.25rem;
 
   input {
-    width: 250px;
+    width: 300px;
   }
 `;
 
