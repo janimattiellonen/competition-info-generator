@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import QRCode from 'qrcode';
 import { format as dateFnsFormat } from 'date-fns';
 import { fi } from 'date-fns/locale';
@@ -8,6 +8,8 @@ import styled from '@emotion/styled';
 import { Preview } from './Preview.tsx';
 
 import { Row } from '../components/Row.tsx';
+import { ColorPickerModal } from '../components/ColorPickerModal.tsx';
+import { ColorTriggers } from '../components/ColorTriggers.tsx';
 
 import { fetchMetrixData } from '../utils/metrix-client.ts';
 
@@ -55,6 +57,32 @@ export function CreateCompetitionInfo() {
   const [overrideCompetitionHost, setOverrideCompetitionHost] =
     useState<boolean>(false);
   const [useTextOverlay, setUseTextOverlay] = useState<boolean>(false);
+  const [useCustomColors, setUseCustomColors] = useState<boolean>(() => {
+    const saved = localStorage.getItem('useCustomColors');
+    return saved ? JSON.parse(saved) : false;
+  });
+  const [textColor, setTextColor] = useState<string>(() => {
+    return localStorage.getItem('textColor') || '#000000';
+  });
+  const [linkColor, setLinkColor] = useState<string>(() => {
+    return localStorage.getItem('linkColor') || '#0066CC';
+  });
+  const [openColorModal, setOpenColorModal] = useState<'text' | 'link' | null>(
+    null
+  );
+
+  // Save colors to localStorage
+  useEffect(() => {
+    localStorage.setItem('useCustomColors', JSON.stringify(useCustomColors));
+  }, [useCustomColors]);
+
+  useEffect(() => {
+    localStorage.setItem('textColor', textColor);
+  }, [textColor]);
+
+  useEffect(() => {
+    localStorage.setItem('linkColor', linkColor);
+  }, [linkColor]);
 
   const formData = useMemo(
     () => ({
@@ -69,6 +97,8 @@ export function CreateCompetitionInfo() {
       customCompetitionHostName,
       customCompetitionHostUrl,
       useTextOverlay,
+      textColor: useCustomColors ? textColor : '#000000',
+      linkColor: useCustomColors ? linkColor : '#0066CC',
     }),
     [
       title,
@@ -82,6 +112,9 @@ export function CreateCompetitionInfo() {
       customCompetitionHostName,
       customCompetitionHostUrl,
       useTextOverlay,
+      useCustomColors,
+      textColor,
+      linkColor,
     ]
   );
 
@@ -279,6 +312,44 @@ export function CreateCompetitionInfo() {
             />
           </CheckBoxRow>
 
+          <CheckBoxRow>
+            <label htmlFor="useCustomColors">Muokkaa tekstien väriä</label>
+            <input
+              id="useCustomColors"
+              type="checkbox"
+              name="useCustomColors"
+              checked={useCustomColors}
+              onChange={() => setUseCustomColors(!useCustomColors)}
+            />
+          </CheckBoxRow>
+
+          {useCustomColors && (
+            <>
+              <ColorTriggers
+                textColor={textColor}
+                linkColor={linkColor}
+                onTextColorClick={() => setOpenColorModal('text')}
+                onLinkColorClick={() => setOpenColorModal('link')}
+              />
+              <ColorPickerModal
+                opened={openColorModal === 'text'}
+                onClose={() => setOpenColorModal(null)}
+                color={textColor}
+                onChange={setTextColor}
+                onReset={() => setTextColor('#000000')}
+                title="Valitse tekstin väri"
+              />
+              <ColorPickerModal
+                opened={openColorModal === 'link'}
+                onClose={() => setOpenColorModal(null)}
+                color={linkColor}
+                onChange={setLinkColor}
+                onReset={() => setLinkColor('#0066CC')}
+                title="Valitse linkin väri"
+              />
+            </>
+          )}
+
           <Row>
             <button disabled={!url} onClick={() => generateQR(url)}>
               Generoi
@@ -299,6 +370,8 @@ export function CreateCompetitionInfo() {
           customCompetitionHostName={formData.customCompetitionHostName}
           customCompetitionHostUrl={formData.customCompetitionHostUrl}
           useTextOverlay={formData.useTextOverlay}
+          textColor={formData.textColor}
+          linkColor={formData.linkColor}
         />
       )}
     </MainFlex>

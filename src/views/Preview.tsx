@@ -59,32 +59,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 5,
-    color: '#000000',
   },
   subtitle: {
     fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#000000',
   },
   urlDescription: {
     fontSize: 20,
     textAlign: 'left',
-    color: '#000000',
   },
   mainUrl: {
     fontSize: 20,
     textAlign: 'left',
-    color: '#0066CC',
     marginTop: 5,
   },
   minorUrl: {
-    color: '#0066CC',
     fontWeight: 'bold',
   },
   content: {
     fontSize: 30,
-    color: '#000000',
   },
   image: {
     width: 250,
@@ -105,6 +99,8 @@ type PreviewProps = {
   customCompetitionHostName?: string;
   customCompetitionHostUrl?: string;
   useTextOverlay?: boolean;
+  textColor?: string;
+  linkColor?: string;
 };
 export function Preview({
   title,
@@ -118,6 +114,8 @@ export function Preview({
   customCompetitionHostName,
   customCompetitionHostUrl,
   useTextOverlay = false,
+  textColor = '#000000',
+  linkColor = '#0066CC',
 }: PreviewProps) {
   if (!competitionHost && !overrideCompetitionHost) {
     return null;
@@ -145,32 +143,32 @@ export function Preview({
 
             {/* Header section with optional semi-transparent overlay */}
             <View style={useTextOverlay ? styles.headerOverlay : { marginTop: 65, marginBottom: 10 }}>
-              <Text style={styles.title}>{title}</Text>
-              <Text style={styles.subtitle}>{date}</Text>
+              <Text style={[styles.title, { color: textColor }]}>{title}</Text>
+              <Text style={[styles.subtitle, { color: textColor }]}>{date}</Text>
             </View>
 
             {/* URL section with optional semi-transparent overlay */}
             <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10 }}>
-              <Text style={styles.urlDescription}>{description}</Text>
-              <Text style={styles.mainUrl}>{url}</Text>
+              <Text style={[styles.urlDescription, { color: textColor }]}>{description}</Text>
+              <Text style={[styles.mainUrl, { color: linkColor }]}>{url}</Text>
             </View>
 
             {/* Content section with optional semi-transparent overlay */}
             {content && (
               <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10 }}>
-                <Text style={styles.content}>{content}</Text>
+                <Text style={[styles.content, { color: textColor }]}>{content}</Text>
               </View>
             )}
 
             {/* Footer section with optional semi-transparent overlay */}
             <View style={useTextOverlay ? styles.textOverlay : { marginBottom: 10 }}>
-              <Text style={{ marginBottom: 5, color: '#000000' }}>Terveisin</Text>
-              <Text style={{ color: '#000000' }}>
+              <Text style={{ marginBottom: 5, color: textColor }}>Terveisin</Text>
+              <Text style={{ color: textColor }}>
                 {competitionHostConfig.name}{' '}
                 {competitionHostConfig.url && (
                   <Text>
                     (
-                    <Text style={styles.minorUrl}>
+                    <Text style={[styles.minorUrl, { color: linkColor }]}>
                       {competitionHostConfig.url}
                     </Text>
                     )
@@ -182,8 +180,8 @@ export function Preview({
             {/* QR Code section with optional semi-transparent overlay */}
             <View style={useTextOverlay ? [styles.textOverlay, { alignItems: 'center' }] : { alignItems: 'center', marginBottom: 10 }}>
               <Image src={qrCode} style={styles.image} />
-              <Text style={{ textAlign: 'center', marginTop: 10, color: '#000000' }}>
-                (<Text style={styles.minorUrl}>{url}</Text>)
+              <Text style={{ textAlign: 'center', marginTop: 10, color: textColor }}>
+                (<Text style={[styles.minorUrl, { color: linkColor }]}>{url}</Text>)
               </Text>
             </View>
           </View>
