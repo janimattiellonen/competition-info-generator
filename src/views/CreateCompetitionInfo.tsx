@@ -75,6 +75,12 @@ const Div = styled.div`
   }
 
   @media (min-width: 1200px) {
+      max-width: 85%;
+      margin: 1.5rem;
+      padding: 1.5rem 2.5rem 1.5rem 1.5rem;
+  }
+    
+  @media (min-width: 1420px) {
     max-width: 90%;
     margin: 1.5rem;
     padding: 1.5rem 2.5rem 1.5rem 1.5rem;
